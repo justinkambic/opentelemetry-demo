@@ -13,7 +13,7 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-          token: ${{ secrets.OTEL_DEMO_MERGE_SECRET }}
+          token: ${{ secrets.WORKFLOW_TOKEN }}
       - name: fetch and push
         env:
           GITHUB_TOKEN: ${{ github.token }}
