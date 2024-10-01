@@ -10,26 +10,27 @@ The following guide describes how to setup the OpenTelemetry demo with Elastic O
 
 Additionally, the OpenTelemetry Contrib collector has also been changed to the [Elastic OpenTelemetry Collector distribution](https://github.com/elastic/elastic-agent/blob/main/internal/pkg/otel/README.md). This ensures a more integrated and optimized experience with Elastic Observability.
 
-## Docker compose
 
-1. Start a free trial on [Elastic Cloud](https://cloud.elastic.co/) and copy the `endpoint` and `secretToken` from the Elastic APM setup instructions in your Kibana.
-1. Open the file `src/otelcollector/otelcol-elastic-config-extras.yaml` in an editor and replace the following two placeholders:
-   - `YOUR_APM_ENDPOINT_WITHOUT_HTTPS_PREFIX`: your Elastic APM endpoint (*without* `https://` prefix) that *must* also include the port (example: `1234567.apm.us-west2.gcp.elastic-cloud.com:443`).
-   - `YOUR_APM_SECRET_TOKEN`: your Elastic APM secret token.
-1. Start the demo with the following command from the repository's root directory:
-   ```
-   make start
-   ```
+## Root cause analysis workshop
 
-## Kubernetes
+The OpenTelemetry Root Cause Analysis (RCA) workshop is designed to identify the underlying causes of incidents or issues within a system instrumented with OpenTelemetry. The goal is to understand why the issue occurred, prevent recurrence, and improve overall system reliability. The workshop was set up to simulate a real-world environment by deploying the OpenTelemetry Demo with the following custom modifications:
+
+- **Ingress controller:** TODO -> add reasoning behind exposing the web server.
+- **Uninstrumented services**: TODO -> explain how/why/which services are not instrumented.
+
 ### Prerequisites:
 - Create a Kubernetes cluster. There are no specific requirements, so you can create a local one, or use a managed Kubernetes cluster, such as [GKE](https://cloud.google.com/kubernetes-engine), [EKS](https://aws.amazon.com/eks/), or [AKS](https://azure.microsoft.com/en-us/products/kubernetes-service).
 - Set up [kubectl](https://kubernetes.io/docs/reference/kubectl/).
 - Set up [Helm](https://helm.sh/).
+- Install the Nginx Ingress Controller:
+
+```
+$ helm install --namespace kube-system nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx
+```
 
 ### Start the Demo
 1. Setup Elastic Observability on Elastic Cloud.
-1. Create a secret in Kubernetes with the following command.
+2. Create a secret in Kubernetes with the following command.
    ```
    kubectl create secret generic elastic-secret \
      --from-literal=elastic_apm_endpoint='YOUR_APM_ENDPOINT_WITHOUT_HTTPS_PREFIX' \
@@ -38,11 +39,11 @@ Additionally, the OpenTelemetry Contrib collector has also been changed to the [
    Don't forget to replace
    - `YOUR_APM_ENDPOINT_WITHOUT_HTTPS_PREFIX`: your Elastic APM endpoint (*without* `https://` prefix) that *must* also include the port (example: `1234567.apm.us-west2.gcp.elastic-cloud.com:443`).
    - `YOUR_APM_SECRET_TOKEN`: your Elastic APM secret token
-1. Execute the following commands to deploy the OpenTelemetry demo to your Kubernetes cluster:
+3. Execute the following commands to deploy the OpenTelemetry demo to your Kubernetes cluster:
    ```
    # clone this repository
    git clone https://github.com/elastic/opentelemetry-demo
-   
+
    # switch to the kubernetes/elastic-helm directory
    cd kubernetes/elastic-helm
 
@@ -55,6 +56,7 @@ Additionally, the OpenTelemetry Contrib collector has also been changed to the [
    # deploy the demo through helm install
    helm install -f deployment.yaml my-otel-demo open-telemetry/opentelemetry-demo
    ```
+4. Update your `hosts` file to redirect `otel-demo.internal` to `127.0.0.1`.
 
 #### Kubernetes monitoring
 
