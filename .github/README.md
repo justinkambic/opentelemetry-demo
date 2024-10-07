@@ -80,8 +80,6 @@ Then, after loading them into your shell run `./elastic-setup`
 
 #### Kubernetes monitoring
 
-## Manual
-
 This demo already enables cluster level metrics collection with `clusterMetrics` and
 Kubernetes events collection with `kubernetesEvents`.
 
