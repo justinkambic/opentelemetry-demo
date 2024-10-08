@@ -46,12 +46,6 @@ for tool in ${tools[@]}; do
 	fi
 done
 
-# Check that current kubernetes context is 'minikube'
-if ! kubectl config current-context | grep -q "minikube"
-then
-	die "Current kubernetes context is not 'minikube', please switch to minikube"
-fi
-
 if [ -z "${OTEL_EXPORTER_OTLP_ENDPOINT}" ]; then
   die "You must set OTEL_EXPORTER_OTLP_ENDPOINT to a valid URL!"
 fi
@@ -76,9 +70,14 @@ if minikube status | grep -q "Running"; then
 else
 	title "Minikube is not running, starting..."
 	minikube start --ports=80:80,443:443
+	minikube addons enable ingress
 fi
 
-echo "\n\n"
+# Check that current kubernetes context is 'minikube'
+if ! kubectl config current-context | grep -q "minikube"
+then
+	die "Current kubernetes context is not 'minikube', please switch to minikube"
+fi
 
 OTEL_ENDPOINT_NO_PROTO=`echo $OTEL_EXPORTER_OTLP_ENDPOINT | sed -r -e 's/^https?:\/\///'`
 OTEL_AUTH_VALUE=`echo $OTEL_EXPORTER_OTLP_HEADERS | cut -d= -f2-`
@@ -111,8 +110,16 @@ helminst () {
 	helm $hcommand $@
 }
 
+title "Installing $APP_NAME helm chart"
 helminst $APP_NAME -f deployment.yaml $1 open-telemetry/opentelemetry-demo
+title "Installing daemonset helm chart"
 helminst otel-daemonset open-telemetry/opentelemetry-collector --values daemonset.yaml  
+title "Installing nginx ingress"
+# Try running the helminst command up to 3 times if it fails
+while ! helminst nginx-ingress ./ingress; do
+  echo "Failed to install nginx-ingress, retrying..."
+  sleep 5
+done
 
 # Check if dns entry for otel-demo.internal exists
 if ! grep -q "otel-demo.internal" /etc/hosts

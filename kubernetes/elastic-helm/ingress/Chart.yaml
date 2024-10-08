@@ -1,0 +1,5 @@
+apiVersion: v2
+name: elastic-otel-demo-nginx-ingress
+description: A Helm chart for Kubernetes NGINX Ingress
+version: 0.1.0
+appVersion: "1.0"
