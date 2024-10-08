@@ -25,6 +25,16 @@ if [[ $OTEL_EXPORTER_OTLP_HEADERS == "Authorization=*" ]]; then
   exit 1
 fi
 
+if [ -z "${OTEL_DEMO_ES_ENDPOINT}" ]; then
+  echo "You must set OTEL_DEMO_ES_ENDPOINT to a valid Elasticsearch URL"
+  exit 1
+fi
+
+if [ -z "${OTEL_DEMO_ES_API_KEY}" ]; then
+  echo "You must set OTEL_DEMO_ES_API_KEY"
+  exit 1
+fi
+
 OTEL_ENDPOINT_NO_PROTO=`echo $OTEL_EXPORTER_OTLP_ENDPOINT | sed -r -e 's/^https?:\/\///'`
 OTEL_AUTH_VALUE=`echo $OTEL_EXPORTER_OTLP_HEADERS | cut -d= -f2-`
 
@@ -32,15 +42,6 @@ kubectl delete secret elastic-secret
 kubectl create secret generic elastic-secret \
   --from-literal=elastic_apm_endpoint="$OTEL_ENDPOINT_NO_PROTO" \
   --from-literal=elastic_apm_secret_token="$OTEL_AUTH_VALUE"
-
-if [ -z "${OTEL_DEMO_ES_ENDPOINT}" ]; then
-  echo "You must set OTEL_DEMO_ES_ENDPOINT to a valid Elasticsearch URL"
-  exit 1
-fi
-if [ -z "${OTEL_DEMO_ES_API_KEY}" ]; then
-  echo "You must set OTEL_DEMO_ES_API_KEY"
-  exit 1
-fi
 
 kubectl delete secret elastic-secret-ds
 kubectl create secret generic elastic-secret-ds \
@@ -52,6 +53,7 @@ pushd kubernetes/elastic-helm
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 helm repo update open-telemetry
 
+# Install or upgrade helm chart
 helminst () {
 	hcommand=upgrade
 	if ! helm status $1 2>&1 > /dev/null;
@@ -61,14 +63,11 @@ helminst () {
 	else
 		echo "$1 already installed, upgrading"
 	fi
-	helm $hcommand -f deployment.yaml $1 open-telemetry/opentelemetry-demo
+	helm $hcommand $@
 }
 
-helminst $APP_NAME
-helminst otel-daemonset
-
-
-
+helminst $APP_NAME -f deployment.yaml $1 open-telemetry/opentelemetry-demo
+helminst otel-daemonset open-telemetry/opentelemetry-collector --values daemonset.yaml  
 
 cat <<-EOF
 Otel demo is deployed with nginx ingress controller running.
