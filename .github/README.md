@@ -20,10 +20,13 @@ The OpenTelemetry Root Cause Analysis (RCA) workshop is designed to identify the
 
 ### Prerequisites:
 
-- Create a Kubernetes cluster. There are no specific requirements, so you can create a local one, or use a managed Kubernetes cluster, such as [GKE](https://cloud.google.com/kubernetes-engine), [EKS](https://aws.amazon.com/eks/), or [AKS](https://azure.microsoft.com/en-us/products/kubernetes-service).
+On a mac you can easily install these prerequisites with: `brew install minikube helm kubernetes-cli`
+
+- Create a Kubernetes cluster. For local development `minikube` is recommended. There are no specific requirements, so you can create a local one, or use a managed Kubernetes cluster, such as [GKE](https://cloud.google.com/kubernetes-engine), [EKS](https://aws.amazon.com/eks/), or [AKS](https://azure.microsoft.com/en-us/products/kubernetes-service).
 - Set up [kubectl](https://kubernetes.io/docs/reference/kubectl/).
 - Set up [Helm](https://helm.sh/).
 - Install the Nginx Ingress Controller:
+- Set up [Minikube](https://minikube.sigs.k8s.io/docs/)
 
 ```
 $ helm install --namespace kube-system nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx
@@ -31,7 +34,7 @@ $ helm install --namespace kube-system nginx ingress-nginx --repo https://kubern
 
 ## Fast Track Startup
 
-The fast way to set things up is with the `elastic-setup` script. Before running it set the following environment variables:
+The fast way to set things up is with the `elastic-setup` script. This assumes and requires `minikube`. Before running it set the following environment variables:
 
 ```bash
 export OTEL_EXPORTER_OTLP_ENDPOINT "https://YOUR_APM_SERVER_ENDPOINT"

@@ -46,6 +46,12 @@ for tool in ${tools[@]}; do
 	fi
 done
 
+# Check that current kubernetes context is 'minikube'
+if ! kubectl config current-context | grep -q "minikube"
+then
+	die "Current kubernetes context is not 'minikube', please switch to minikube"
+fi
+
 if [ -z "${OTEL_EXPORTER_OTLP_ENDPOINT}" ]; then
   die "You must set OTEL_EXPORTER_OTLP_ENDPOINT to a valid URL!"
 fi
