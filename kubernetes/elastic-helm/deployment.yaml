@@ -55,8 +55,12 @@ opentelemetry-collector:
         endpoint: ${env:MY_POD_IP}:13133
     exporters:
       debug: {}
-      otlp/elastic:
-        endpoint: "http://48.217.113.189:4317"
+      otlp/apm:
+        endpoint: "http://48.217.113.189:4319"
+        tls:
+          insecure: true
+      otlp/esexporter:
+        endpoint: "http://48.217.113.189:4321"
         tls:
           insecure: true
     processors:
@@ -87,7 +91,8 @@ opentelemetry-collector:
         logs:
           exporters:
           - debug
-          - otlp/elastic
+          - otlp/apm
+          - otlp/esexporter
           processors:
           - batch
           - resource
@@ -95,7 +100,8 @@ opentelemetry-collector:
           - otlp
         metrics:
           exporters:
-          - otlp/elastic
+          - otlp/apm
+          - otlp/esexporter
           - debug
           processors:
           - batch
@@ -105,7 +111,8 @@ opentelemetry-collector:
           - otlp
         traces:
           exporters:
-          - otlp/elastic
+          - otlp/apm
+          - otlp/esexporter
           - debug
           processors:
           - batch
