@@ -114,12 +114,6 @@ title "Installing $APP_NAME helm chart"
 helminst $APP_NAME -f deployment.yaml $1 open-telemetry/opentelemetry-demo
 title "Installing daemonset helm chart"
 helminst otel-daemonset open-telemetry/opentelemetry-collector --values daemonset.yaml  
-title "Installing nginx ingress"
-# Try running the helminst command up to 3 times if it fails
-while ! helminst nginx-ingress ./ingress; do
-  echo "Failed to install nginx-ingress, retrying..."
-  sleep 5
-done
 
 # Check if dns entry for otel-demo.internal exists
 if ! grep -q "otel-demo.internal" /etc/hosts
@@ -129,14 +123,18 @@ else
 	title "otel-demo.internal already in /etc/hosts!"
 fi
 
+title "Waiting for kubectl pods to finish initializing..."
+# Get the status of all pods in the namespace and grep for "ContainerCreating" or "PodInitializing"
+while kubectl get pods --all-namespaces | grep -q -E "ContainerCreating|PodInitializing"; do
+	initializing=`kubectl get pods --all-namespaces | grep -E "ContainerCreating|PodInitializing" | wc -l | xargs`
+	echo "Waiting for $initializing pods to finish initializing..."
+	sleep 5
+done
+
+title "Installing nginx ingress"
+helminst nginx-ingress ./ingress
+
 title "Setup complete!"
 cat <<-EOF
-
-
-Please add the following line to your /etc/hosts file
-Note, that for minikube and some other kubernetes distributions you may need a different IP.
-For minikube this may be found with the 'minikube ip' command.
-
-Once setup you may access the demo at
-You may access it at http://otel-demo.internal
+You may access the demo at http://otel-demo.internal
 EOF
