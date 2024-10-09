@@ -45,7 +45,11 @@ export OTEL_DEMO_ES_API_KEY "YOUR_ES_API_KEY"
 
 Then, after loading them into your shell run `./elastic-setup`
 
+You are now done! If you'd like to set things up manually see the "Manual Startup" section below.
+
 ## Manual Startup
+
+If you'd rather not use the "Fast Track" startup follow these instructions.
 
 ### Start the Demo
 
