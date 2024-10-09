@@ -29,7 +29,7 @@ On a mac you can easily install these prerequisites with: `brew install minikube
 - Set up [Minikube](https://minikube.sigs.k8s.io/docs/)
 
 ```
-$ helm install --namespace kube-system nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx
+helm install --namespace kube-system nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx
 ```
 
 ## Fast Track Startup
