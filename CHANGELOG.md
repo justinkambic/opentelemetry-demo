@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [chore] fix command in README.md
+  ([#91](https://github.com/elastic/opentelemetry-demo/pull/91))
 * [accountingservice] allow running the container with non root user
   ([#1692](https://github.com/open-telemetry/opentelemetry-demo/pull/1692))
 * [chore] Add yamllint to `make all`
