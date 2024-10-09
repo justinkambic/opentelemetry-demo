@@ -15,13 +15,16 @@
    git clone https://github.com/elastic/opentelemetry-demo
 
    # switch to the kubernetes/elastic-helm directory
-   cd kubernetes/elastic-helm
+   cd opentelemetry-demo/kubernetes/elastic-helm
 
    # !(when running it for the first time) add the open-telemetry Helm repostiroy
    helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 
    # !(when an older helm open-telemetry repo exists) update the open-telemetry helm repo
    helm repo update open-telemetry
+
+   # Create a configmap for flagd errors configuration
+   kubectl apply -f flagd-errors.yaml
 
    # deploy the demo through helm install
    helm install -f deployment.yaml my-otel-demo open-telemetry/opentelemetry-demo
