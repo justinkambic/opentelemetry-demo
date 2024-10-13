@@ -1,9 +1,9 @@
-import type { SyntheticsConfig } from '@elastic/synthetics';
+import type { SyntheticsConfig } from "@elastic/synthetics";
 
-export default env => {
+export default (env) => {
   const config: SyntheticsConfig = {
     params: {
-      url: 'http://otel-demo.internal',
+      url: "http://otel-demo.internal",
     },
     playwrightOptions: {
       ignoreHTTPSErrors: false,
@@ -14,18 +14,18 @@ export default env => {
     monitor: {
       schedule: 1,
       locations: [],
-      privateLocations: ['otel-demo'],
+      privateLocations: [process.env.SYNTHETICS_PRIVATE_LOCATION],
     },
     /**
      * Project monitors settings
      */
     project: {
-      id: 'otel-demo-monitors',
+      id: "otel-demo-monitors",
       url: process.env.KIBANA_URL,
-      space: 'default',
+      space: "default",
     },
   };
-  if (env !== 'development') {
+  if (env !== "development") {
     /**
      * Override configuration specific to environment
      * Ex: config.params.url = ""

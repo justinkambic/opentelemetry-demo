@@ -1,9 +1,9 @@
 apiVersion: apps/v1
-kind: ReplicaSet
+kind: Deployment
 metadata:
   name: otel-synthetics
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: 1
   selector:
     matchLabels:
       app: otel-synthetics
@@ -15,16 +15,17 @@ spec:
       containers:
         - name: otel-synthetics
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
           env:
             - name: FLEET_ENROLL
               value: "1"
-            - name: FLEET_SERVER_ELASTICSEARCH_HOST
-                secretKeyRef:
-                  name: elastic-secret-ds
-                  key: elastic_endpoint
-            - name: FLEET_SERVER_SERVICE_TOKEN
+            - name: FLEET_URL
               valueFrom:
                 secretKeyRef:
-                  name: fleet-server-secret
-                  key: service-token
+                  name: elastic-secret-ds
+                  key: fleet_url
+            - name: FLEET_ENROLLMENT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: elastic-secret-ds
+                  key: fleet_enrollment_token
